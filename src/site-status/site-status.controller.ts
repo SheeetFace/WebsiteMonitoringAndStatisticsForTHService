@@ -13,29 +13,33 @@ export class SiteStatusController {
   }
 
   @Get()
-  async findAll(@Req() req) {
+  async findAll() {
     // return this.siteStatusService.findAll();
-    const data = await this.siteStatusService.findAll();
-    return data;
+    return await this.siteStatusService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.siteStatusService.findOne(+id); //! почему в чсило превращаем id?
+  @Get('/getItem:projectID')
+  async findOne(@Param('projectID') projectID: string,) {
+    return this.siteStatusService.findOne(projectID);
+  }
+  
+  @Patch('/changeWebHook:projectID')
+  async changeWebHook(@Param('projectID') projectID: string, @Body('newWebHook') newWebHook: string) {
+    return await this.siteStatusService.changeWebHook(projectID, newWebHook);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSiteStatusDto: UpdateSiteStatusDto) {
-  //   return this.siteStatusService.update(+id, updateSiteStatusDto);
-  // }
+  @Patch('/changeURL:projectID')
+  async changeURL(@Param('projectID') projectID: string, @Body('newURL') newURL: string) {
+    return await this.siteStatusService.changeURL(projectID, newURL);
+  }
 
-  @Patch('/statistics:projectID')
-async addStatistic(@Param('projectID') projectID: string, @Body() newStatisticItem: { date: string, status: boolean }) {
-  return await this.siteStatusService.addStatistic(projectID, newStatisticItem);
-}
+  @Patch('/addStatistics:projectID')
+  async addStatistic(@Param('projectID') projectID: string, @Body() newStatisticItem: { date: string, status: boolean }) {
+    return await this.siteStatusService.addStatistic(projectID, newStatisticItem);
+  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.siteStatusService.remove(+id);
+  @Delete('/remove:projectID')
+  remove(@Param('projectID') projectID: string) {
+    return this.siteStatusService.remove(projectID);
   }
 }

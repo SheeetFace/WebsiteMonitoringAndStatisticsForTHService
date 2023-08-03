@@ -1,11 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateSiteStatusDto {
-    // URL: string;
-    // projectID: string;
-    // webHook: string;
-    // statistic: [];
-    
+
   @IsNotEmpty()
   URL: string;
 

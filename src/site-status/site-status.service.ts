@@ -5,6 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SiteStatus } from './entities/site-status.entity';
 import { Repository } from 'typeorm';
 
+import { getCurrentDate } from 'src/utils/date.util';
+import { checkWebsite } from 'src/utils/website-checker.util';
+
+import { discordNotifier } from 'src/services/discord/discord-notifier';
+// import { DiscordType } from 'src/types/discordTypes';
+
 @Injectable()
 export class SiteStatusService {
   constructor(
@@ -13,62 +19,79 @@ export class SiteStatusService {
   ){}
 
   async create(createSiteStatusDto: CreateSiteStatusDto) {
+
+    const status =await checkWebsite(createSiteStatusDto.URL)
+
+    const now = getCurrentDate()
+
+    const firstStatistic = {
+      "date": now,
+      "status": status.status
+    }
+    console.log(createSiteStatusDto,status )
+    if(createSiteStatusDto.webHook){
+      //вызывать из сервисов дискорд нотифиер
+      discordNotifier('INIT',status,now,createSiteStatusDto.webHook,createSiteStatusDto.URL)
+    }
+
+
+  
     const siteStatus = new SiteStatus();
       siteStatus.URL = createSiteStatusDto.URL;
       siteStatus.projectID = createSiteStatusDto.projectID;
       siteStatus.webHook = createSiteStatusDto.webHook;
-      siteStatus.statistics = createSiteStatusDto.statistics;
+      siteStatus.statistics = [firstStatistic];
     
       return await this.categoryRepository.save(siteStatus);
-
-
-    // console.log(createSiteStatusDto.projectID)
-    // console.log(`This action adds a new siteStatus ${JSON.stringify(createSiteStatusDto)}`)
-    // return `This action adds a new siteStatus ${createSiteStatusDto}`;
   }
-
-  // async create(createSiteStatusDto: CreateSiteStatusDto) {
-  //   const siteStatus = new SiteStatus();
-  //   siteStatus.URL = createSiteStatusDto.URL;
-  //   siteStatus.projectID = createSiteStatusDto.projectID;
-  //   siteStatus.webHook = createSiteStatusDto.webHook;
-  //   siteStatus.statistics = createSiteStatusDto.statistics;
-  
-  //   return await this.categoryRepository.save(siteStatus);
-  //   console.log( await createSiteStatusDto)
-  // }
 
   async findAll() {
     return await this.categoryRepository.find(); 
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} siteStatus`;
+  async findOne(projectID: string) {
+    const strProjectID =projectID.replace(":", "")
+    return await this.categoryRepository.find({where: {projectID: strProjectID}}); 
   }
 
-  update(id: number, updateSiteStatusDto: UpdateSiteStatusDto) {
-    return `This action updates a #${id} siteStatus12312`;
+  // update(id: number, updateSiteStatusDto: UpdateSiteStatusDto) {
+  //   return `This action updates a #${id} siteStatus12312`;
+  // }
+
+  async changeWebHook(projectID: string, newWebHook: string){
+
+    const strProjectID =projectID.replace(":", "")
+    const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
+    if(!siteStatus){
+      throw new Error('SiteStatus not found');
+    }
+
+    siteStatus.webHook = newWebHook;
+    return await this.categoryRepository.save(siteStatus);
   }
 
-  // updateURL(id: number, updateURLDto: UpdateURLDto) {
-  //   return `This action updates a #${id} siteStatusURL`;
-  // }
-  // updateWebHook(id: number, updateWebHookDto: UpdateWebHookDto) {
-  //   return `This action updates a #${id} siteStatus`;
-  // }
+  async changeURL(projectID: string, newURL: string){
+    console.log(typeof newURL)
+    const strProjectID =projectID.replace(":", "")
+    const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
+    if(!siteStatus){
+      throw new Error('SiteStatus not found');
+    }
+
+    siteStatus.URL = newURL;
+    return await this.categoryRepository.save(siteStatus);
+  }
 
   async addStatistic(projectID: string, newStatisticItem: { date: string, status: boolean }) {
 
     const strProjectID =projectID.replace(":", "")
-    console.log(strProjectID,newStatisticItem)
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
-    if (!siteStatus) {
+
+    if(!siteStatus){
       throw new Error('SiteStatus not found');
-    }else{
-      console.log(siteStatus)
     }
   
-    if (!siteStatus.statistics) {
+    if(!siteStatus.statistics){
       siteStatus.statistics = [];
     }
   
@@ -77,7 +100,25 @@ export class SiteStatusService {
     return await this.categoryRepository.save(siteStatus);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} siteStatus`;
+  async remove(projectID: string) {
+
+    const strProjectID = projectID.replace(":", "");
+
+    const siteStatus = await this.categoryRepository.findOne({
+      where: { projectID: strProjectID } 
+    });
+  
+    if (!siteStatus) {
+      console.error('projectID not found');
+      return {status:false,
+              isError:'projectID not found'}
+    }
+  
+    await this.categoryRepository.delete({
+      projectID: strProjectID  
+    });
+  
+    return {status:true,
+          isError:''}
   }
 }
