@@ -42,4 +42,9 @@ export class SiteStatusController {
   remove(@Param('projectID') projectID: string) {
     return this.siteStatusService.remove(projectID);
   }
+
+  @Get('/databaseSize')
+  async getDatabaseSize() {
+    return this.siteStatusService.getDatabaseSize();
+  }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateSiteStatusDto } from './dto/create-site-status.dto';
 import { UpdateSiteStatusDto } from './dto/update-site-status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+
+
 import { SiteStatus } from './entities/site-status.entity';
 import { Repository } from 'typeorm';
 
@@ -21,21 +23,17 @@ export class SiteStatusService {
   async create(createSiteStatusDto: CreateSiteStatusDto) {
 
     const status =await checkWebsite(createSiteStatusDto.URL)
-
     const now = getCurrentDate()
 
     const firstStatistic = {
       "date": now,
       "status": status.status
     }
-    console.log(createSiteStatusDto,status )
-    if(createSiteStatusDto.webHook){
-      //вызывать из сервисов дискорд нотифиер
+
+    if(createSiteStatusDto.webHook && status){
       discordNotifier('INIT',status,now,createSiteStatusDto.webHook,createSiteStatusDto.URL)
     }
 
-
-  
     const siteStatus = new SiteStatus();
       siteStatus.URL = createSiteStatusDto.URL;
       siteStatus.projectID = createSiteStatusDto.projectID;
@@ -54,12 +52,8 @@ export class SiteStatusService {
     return await this.categoryRepository.find({where: {projectID: strProjectID}}); 
   }
 
-  // update(id: number, updateSiteStatusDto: UpdateSiteStatusDto) {
-  //   return `This action updates a #${id} siteStatus12312`;
-  // }
 
   async changeWebHook(projectID: string, newWebHook: string){
-
     const strProjectID =projectID.replace(":", "")
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
     if(!siteStatus){
@@ -71,7 +65,6 @@ export class SiteStatusService {
   }
 
   async changeURL(projectID: string, newURL: string){
-    console.log(typeof newURL)
     const strProjectID =projectID.replace(":", "")
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
     if(!siteStatus){
@@ -120,5 +113,21 @@ export class SiteStatusService {
   
     return {status:true,
           isError:''}
+  }
+
+  async getDatabaseSize(): Promise<{totalSize:string,usedSize:string}>{
+    const dbName = process.env.DB_NAME;
+    // const [result] = await this.categoryRepository.query(
+    //   `SELECT   
+    //       pg_database_size('defaultdb') AS totalSize,
+    //       pg_size_pretty(pg_database_size(current_database())) AS usedSize`  
+    // )
+    const [result] = await this.categoryRepository.query(
+      `SELECT   
+         pg_database_size($1) AS totalSize,
+         pg_size_pretty(pg_database_size(current_database())) AS used_size`,  
+         [dbName]  
+    );
+    return result
   }
 }
