@@ -12,7 +12,7 @@ export const checkWebsite = async(url:string):Promise<Response>=>{
         if(response.status === 200){
           return { status:true}
         }
-
+        
         if(response.status >= 400){
           console.error(`💀 ОШИБКА ПОЛУЧЕНИЯ ДАННЫХ ПРИ ПРОВЕРКЕ СТАТУСА САЙТА(${url} ${response.statusText})💀`)
           return {status:false, 

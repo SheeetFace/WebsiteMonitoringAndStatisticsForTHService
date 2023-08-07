@@ -1,5 +1,8 @@
 import fetch from 'node-fetch';
 import { webHookINIT } from './webHookTemplates/webHook-INIT';
+import { webHookOBSERVER } from './webHookTemplates/webHook-OBSERVER';
+
+
 import { DiscordType } from "src/types/discordTypes"
 
 
@@ -21,8 +24,8 @@ export const discordNotifier=async(type:DiscordType,status:Status,date:string,we
                 break
     
             case "OBSERVER":
-    
-                break
+                return webHookOBSERVER(status,date,URL)
+                // break
         }
     }
 

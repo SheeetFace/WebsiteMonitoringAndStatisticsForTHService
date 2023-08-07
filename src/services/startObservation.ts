@@ -1,6 +1,7 @@
 import { SiteStatusController } from "src/site-status/site-status.controller"
 import { checkWebsite } from "src/utils/website-checker.util"
 import { getCurrentDate } from "src/utils/date.util"
+import { discordNotifier } from "./discord/discord-notifier"
 
 interface Item{
     id: number,
@@ -31,15 +32,17 @@ export const startObservation =(siteStatusService: any) => {
     }, 30000);
 
     const chekingAll = async()=>{
+
         const res = await findAllFunction() 
-        const totalItems = res.length;
-        let checkedItems = 0;
+
+        const totalItems = res.length
+        let checkedItems = 0
           
         if(res){      
           res.reduce(async (promise, item:Item)=>{
             await promise   
             checkOne(item).then(()=>{
-              checkedItems++;  
+              checkedItems++ 
               if(checkedItems === totalItems){
                 console.log(`Проверено ${checkedItems} из ${totalItems}`);    
                 return 
@@ -56,17 +59,15 @@ export const startObservation =(siteStatusService: any) => {
         const siteStatus = await checkWebsite(item.URL)
 
         if(siteStatus.status !== item.statistics[item.statistics.length-1].status){
-            // console.log(siteStatus)
             console.log(`НЕ СОВПАДАЕТ ${item.id}`)
-            //!сначало в базу записываем
-            //! потом выписываем ошибку
-            addDifferentStatus(
-                item.projectID,  
-                { 
-                  date: getCurrentDate(),
-                  status: siteStatus.status
-                }      
-              );
+
+            const now = getCurrentDate()
+
+            const data = await addDifferentStatus(item.projectID,{date:now,status:siteStatus.status})
+            //! првоерить, если массив со статусами пуст, тогда может ничего не писать, а то вдруг 2 раза будет писать
+            discordNotifier("OBSERVER",siteStatus,now,data.webHook,data.URL)
+            
+
         }else{
             console.log(`всё норм для ${item.id}`)
         }
