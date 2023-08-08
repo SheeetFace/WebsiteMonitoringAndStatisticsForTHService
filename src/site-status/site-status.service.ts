@@ -121,10 +121,11 @@ export class SiteStatusService {
     }
 
     if(newData.webHook){
-      console.log(newData.webHook)
-      console.log(temporary)
       discordNotifier("CHANGED",{status:true},'',newData.webHook,'',message)
     }
+
+    temporary={}
+    message=''
 
     //проверить, что в дис пришло уведомление или возвращать ошибку
     return await this.categoryRepository.save(siteStatus);

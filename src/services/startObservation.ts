@@ -28,8 +28,8 @@ export const startObservation =(siteStatusService: any) => {
   
     setInterval(()=> {
         chekingAll()
-    // }, 60000);
-    }, 30000);
+    }, 900000);
+    // }, 30000);
 
     const chekingAll = async()=>{
 
