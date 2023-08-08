@@ -23,18 +23,22 @@ export class SiteStatusController {
     return this.siteStatusService.findOne(projectID);
   }
   
-  @Patch('/changeWebHook:projectID')
-  async changeWebHook(@Param('projectID') projectID: string, @Body('newWebHook') newWebHook: string) {
-    return await this.siteStatusService.changeWebHook(projectID, newWebHook);
-  }
+  // @Patch('/changeWebHook:projectID')
+  // async changeWebHook(@Param('projectID') projectID: string, @Body('newWebHook') newWebHook: string) {
+  //   return await this.siteStatusService.changeWebHook(projectID, newWebHook);
+  // }
 
-  @Patch('/changeURL:projectID')
-  async changeURL(@Param('projectID') projectID: string, @Body('newURL') newURL: string) {
-    return await this.siteStatusService.changeURL(projectID, newURL);
+  // @Patch('/changeURL:projectID')
+  // async changeURL(@Param('projectID') projectID: string, @Body('newURL') newURL: string) {
+  //   return await this.siteStatusService.changeURL(projectID, newURL);
+  // }
+  @Patch('/changeData:projectID')
+  async changeData(@Param('projectID') projectID: string, @Body() newData:{webHook:string, URL:string}){
+    return await this.siteStatusService.changeData(projectID, newData);
   }
 
   @Patch('/addStatistics:projectID')
-  async addStatistic(@Param('projectID') projectID: string, @Body() newStatisticItem: { date: string, status: boolean }) {
+  async addStatistic(@Param('projectID') projectID: string, @Body() newStatisticItem:{date:string,status:boolean}){
     return await this.siteStatusService.addStatistic(projectID, newStatisticItem);
   }
 

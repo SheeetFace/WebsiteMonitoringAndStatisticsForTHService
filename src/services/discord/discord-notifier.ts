@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { webHookINIT } from './webHookTemplates/webHook-INIT';
 import { webHookOBSERVER } from './webHookTemplates/webHook-OBSERVER';
+import { webHookCHANGED } from './webHookTemplates/webHook-CHANGED';
 
 
 import { DiscordType } from "src/types/discordTypes"
@@ -11,21 +12,19 @@ interface Status{
     isError?:string
 }
 
-export const discordNotifier=async(type:DiscordType,status:Status,date:string,webHook:string,URL:string)=>{
+//https://birdie0.github.io/discord-webhooks-guide/structure/embeds.html
 
+export const discordNotifier=async(type:DiscordType,status:Status,date:string,webHook:string,URL:string,message?:string)=>{
     const chooseTemplate = (type:DiscordType)=>{
         switch(type){
             case "INIT":
                 return webHookINIT(status,date,URL)
-                // break
     
             case "CHANGED":
-    
-                break
-    
+                return webHookCHANGED(message)
+                
             case "OBSERVER":
                 return webHookOBSERVER(status,date,URL)
-                // break
         }
     }
 

@@ -29,7 +29,11 @@ export const webHookOBSERVER = (status:Status,date:string,URL:string)=>{
                     // }] : [])
 
                 ],
+                "image": {
+                    "url": "https://cdn.discordapp.com/attachments/872343092500504628/1138391555036680272/image.png"
+                }
             }
+            
         ]
     };
 

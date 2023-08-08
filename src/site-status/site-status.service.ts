@@ -11,7 +11,13 @@ import { getCurrentDate } from 'src/utils/date.util';
 import { checkWebsite } from 'src/utils/website-checker.util';
 
 import { discordNotifier } from 'src/services/discord/discord-notifier';
-// import { DiscordType } from 'src/types/discordTypes';
+import { DiscordType } from 'src/types/discordTypes';
+
+// type Type = "URL"|"WEBHOOK"|"URLANDWEBHOOK"
+interface Temporary{
+  oldURL?:string,
+  oldWebHook?:string
+}
 
 @Injectable()
 export class SiteStatusService {
@@ -20,8 +26,8 @@ export class SiteStatusService {
     private readonly categoryRepository: Repository<SiteStatus>
   ){}
 
-  async create(createSiteStatusDto: CreateSiteStatusDto) {
 
+  async create(createSiteStatusDto: CreateSiteStatusDto) {
     const status =await checkWebsite(createSiteStatusDto.URL)
     const now = getCurrentDate()
 
@@ -53,30 +59,78 @@ export class SiteStatusService {
   }
 
 
-  async changeWebHook(projectID: string, newWebHook: string){
+  // async changeWebHook(projectID: string, newWebHook: string){
+  //   const strProjectID =projectID.replace(":", "")
+  //   const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
+  //   if(!siteStatus){
+  //     throw new Error('SiteStatus not found');
+  //   }
+
+  //   siteStatus.webHook = newWebHook;
+  //   return await this.categoryRepository.save(siteStatus);
+  // }
+
+  // async changeURL(projectID: string, newURL: string){
+  //   const strProjectID =projectID.replace(":", "")
+  //   const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
+  //   if(!siteStatus){
+  //     throw new Error('SiteStatus not found');
+  //   }
+
+  //   siteStatus.URL = newURL;
+  //   return await this.categoryRepository.save(siteStatus);
+  // }
+
+  async changeData(projectID: string, newData:{webHook:string, URL:string}){
     const strProjectID =projectID.replace(":", "")
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
+
+    // let type:Type
+    let temporary:Temporary
+    let message:string
+
     if(!siteStatus){
       throw new Error('SiteStatus not found');
     }
 
-    siteStatus.webHook = newWebHook;
-    return await this.categoryRepository.save(siteStatus);
-  }
 
-  async changeURL(projectID: string, newURL: string){
-    const strProjectID =projectID.replace(":", "")
-    const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
-    if(!siteStatus){
-      throw new Error('SiteStatus not found');
+    if(siteStatus.URL !== newData.URL && siteStatus.webHook === newData.webHook){
+      temporary={oldURL:siteStatus.URL}
+      siteStatus.URL = newData.URL
+      console.log('URL CHANGED')
+      message=`ты изменил ${temporary.oldURL} на ${newData.URL}`
+      // type = 'URL'
+
+    }else if(siteStatus.webHook !== newData.webHook && siteStatus.URL === newData.URL){
+      temporary={oldWebHook:siteStatus.webHook}
+      siteStatus.webHook = newData.webHook
+      console.log('WEBHOOK CHANGED')
+      message=`ты изменил вебхук`
+      // type="WEBHOOK"
+
+    }else{
+      temporary={oldURL:siteStatus.URL,
+                oldWebHook:siteStatus.webHook}
+
+      siteStatus.URL = newData.URL
+      siteStatus.webHook = newData.webHook
+      console.log('URL/WEBHOOK CHANGED')
+      // type = 'URLANDWEBHOOK'
+      message=`ты изменил вебхук, а также ${temporary.oldURL} на ${newData.URL}`
+
     }
 
-    siteStatus.URL = newURL;
+    if(newData.webHook){
+      console.log(newData.webHook)
+      console.log(temporary)
+      discordNotifier("CHANGED",{status:true},'',newData.webHook,'',message)
+    }
+
+    //проверить, что в дис пришло уведомление или возвращать ошибку
     return await this.categoryRepository.save(siteStatus);
   }
 
   async addStatistic(projectID: string, newStatisticItem: { date: string, status: boolean }) {
-
     const strProjectID =projectID.replace(":", "")
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
 
@@ -93,8 +147,8 @@ export class SiteStatusService {
     return await this.categoryRepository.save(siteStatus);
   }
 
-  async remove(projectID: string) {
 
+  async remove(projectID: string) {
     const strProjectID = projectID.replace(":", "");
 
     const siteStatus = await this.categoryRepository.findOne({
@@ -112,20 +166,17 @@ export class SiteStatusService {
     });
   
     return {status:true,
-          isError:''}
+            isError:''}
   }
+
 
   async getDatabaseSize(): Promise<{totalSize:string,usedSize:string}>{
     const dbName = process.env.DB_NAME;
-    // const [result] = await this.categoryRepository.query(
-    //   `SELECT   
-    //       pg_database_size('defaultdb') AS totalSize,
-    //       pg_size_pretty(pg_database_size(current_database())) AS usedSize`  
-    // )
+
     const [result] = await this.categoryRepository.query(
       `SELECT   
          pg_database_size($1) AS totalSize,
-         pg_size_pretty(pg_database_size(current_database())) AS used_size`,  
+         pg_size_pretty(pg_database_size(current_database())) AS usedSize`,  
          [dbName]  
     );
     return result

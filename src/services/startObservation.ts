@@ -64,10 +64,9 @@ export const startObservation =(siteStatusService: any) => {
             const now = getCurrentDate()
 
             const data = await addDifferentStatus(item.projectID,{date:now,status:siteStatus.status})
-            //! првоерить, если массив со статусами пуст, тогда может ничего не писать, а то вдруг 2 раза будет писать
+
             discordNotifier("OBSERVER",siteStatus,now,data.webHook,data.URL)
             
-
         }else{
             console.log(`всё норм для ${item.id}`)
         }
