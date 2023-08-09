@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete,Req } from '@nestjs/common';
 import { SiteStatusService } from './site-status.service';
 import { CreateSiteStatusDto } from './dto/create-site-status.dto';
-import { UpdateSiteStatusDto } from './dto/update-site-status.dto';
 
 @Controller('site-status')
 export class SiteStatusController {
@@ -14,7 +13,6 @@ export class SiteStatusController {
 
   @Get()
   async findAll() {
-    // return this.siteStatusService.findAll();
     return await this.siteStatusService.findAll();
   }
 
@@ -22,16 +20,7 @@ export class SiteStatusController {
   async findOne(@Param('projectID') projectID: string,) {
     return this.siteStatusService.findOne(projectID);
   }
-  
-  // @Patch('/changeWebHook:projectID')
-  // async changeWebHook(@Param('projectID') projectID: string, @Body('newWebHook') newWebHook: string) {
-  //   return await this.siteStatusService.changeWebHook(projectID, newWebHook);
-  // }
 
-  // @Patch('/changeURL:projectID')
-  // async changeURL(@Param('projectID') projectID: string, @Body('newURL') newURL: string) {
-  //   return await this.siteStatusService.changeURL(projectID, newURL);
-  // }
   @Patch('/changeData:projectID')
   async changeData(@Param('projectID') projectID: string, @Body() newData:{webHook:string, URL:string}){
     return await this.siteStatusService.changeData(projectID, newData);

@@ -28,7 +28,7 @@ import * as fs from 'fs';
               inject:[ConfigService]
             })
   ],
-  controllers: [AppController], //контроллер - это роуты
-  providers: [AppService],      //логика роута
+  controllers: [AppController], 
+  providers: [AppService],      
 })
 export class AppModule {}

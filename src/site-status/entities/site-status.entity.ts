@@ -1,10 +1,8 @@
-//это таблица в базе данных
-
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class SiteStatus {
-    @PrimaryGeneratedColumn() //auto genereting id
+    @PrimaryGeneratedColumn() 
     id:number;
 
     @Column()

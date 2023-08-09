@@ -3,16 +3,16 @@ import { AppModule } from './app.module';
 import { startObservation } from './services/startObservation';
 import { SiteStatusService } from './site-status/site-status.service';
 
-//основной файл, который запускает бэк
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.enableCors(); // need?
+  app.enableCors();
 
-  // startObservation()
-  const siteStatusService = app.get(SiteStatusService); // Получить экземпляр SiteStatusService
+  const siteStatusService = app.get(SiteStatusService)
 
-  startObservation(siteStatusService); // Вызвать функцию startObservation и передать зависимость
+  startObservation(siteStatusService)
+  
   await app.listen(3000);
 }
 bootstrap();

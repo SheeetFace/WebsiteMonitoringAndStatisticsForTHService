@@ -3,7 +3,6 @@ import { CreateSiteStatusDto } from './dto/create-site-status.dto';
 import { UpdateSiteStatusDto } from './dto/update-site-status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 
-
 import { SiteStatus } from './entities/site-status.entity';
 import { Repository } from 'typeorm';
 
@@ -11,13 +10,13 @@ import { getCurrentDate } from 'src/utils/date.util';
 import { checkWebsite } from 'src/utils/website-checker.util';
 
 import { discordNotifier } from 'src/services/discord/discord-notifier';
-import { DiscordType } from 'src/types/discordTypes';
 
-// type Type = "URL"|"WEBHOOK"|"URLANDWEBHOOK"
+
 interface Temporary{
   oldURL?:string,
   oldWebHook?:string
 }
+
 
 @Injectable()
 export class SiteStatusService {
@@ -58,34 +57,10 @@ export class SiteStatusService {
     return await this.categoryRepository.find({where: {projectID: strProjectID}}); 
   }
 
-
-  // async changeWebHook(projectID: string, newWebHook: string){
-  //   const strProjectID =projectID.replace(":", "")
-  //   const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
-  //   if(!siteStatus){
-  //     throw new Error('SiteStatus not found');
-  //   }
-
-  //   siteStatus.webHook = newWebHook;
-  //   return await this.categoryRepository.save(siteStatus);
-  // }
-
-  // async changeURL(projectID: string, newURL: string){
-  //   const strProjectID =projectID.replace(":", "")
-  //   const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
-  //   if(!siteStatus){
-  //     throw new Error('SiteStatus not found');
-  //   }
-
-  //   siteStatus.URL = newURL;
-  //   return await this.categoryRepository.save(siteStatus);
-  // }
-
   async changeData(projectID: string, newData:{webHook:string, URL:string}){
     const strProjectID =projectID.replace(":", "")
     const siteStatus = await this.categoryRepository.findOne({where: {projectID: strProjectID}});
 
-    // let type:Type
     let temporary:Temporary
     let message:string
 
@@ -93,20 +68,18 @@ export class SiteStatusService {
       throw new Error('SiteStatus not found');
     }
 
-
     if(siteStatus.URL !== newData.URL && siteStatus.webHook === newData.webHook){
       temporary={oldURL:siteStatus.URL}
       siteStatus.URL = newData.URL
       console.log('URL CHANGED')
       message=`ты изменил ${temporary.oldURL} на ${newData.URL}`
-      // type = 'URL'
+
 
     }else if(siteStatus.webHook !== newData.webHook && siteStatus.URL === newData.URL){
       temporary={oldWebHook:siteStatus.webHook}
       siteStatus.webHook = newData.webHook
       console.log('WEBHOOK CHANGED')
       message=`ты изменил вебхук`
-      // type="WEBHOOK"
 
     }else{
       temporary={oldURL:siteStatus.URL,
@@ -115,7 +88,6 @@ export class SiteStatusService {
       siteStatus.URL = newData.URL
       siteStatus.webHook = newData.webHook
       console.log('URL/WEBHOOK CHANGED')
-      // type = 'URLANDWEBHOOK'
       message=`ты изменил вебхук, а также ${temporary.oldURL} на ${newData.URL}`
 
     }
@@ -124,7 +96,6 @@ export class SiteStatusService {
       discordNotifier("CHANGED",{status:true},'',newData.webHook,'',message)
     }
 
-    //проверить, что в дис пришло уведомление или возвращать ошибку
     return await this.categoryRepository.save(siteStatus);
   }
 

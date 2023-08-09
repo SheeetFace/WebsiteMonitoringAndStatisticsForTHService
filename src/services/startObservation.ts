@@ -66,7 +66,7 @@ export const startObservation =(siteStatusService: any) => {
             const data = await addDifferentStatus(item.projectID,{date:now,status:siteStatus.status})
 
             discordNotifier("OBSERVER",siteStatus,now,data.webHook,data.URL)
-            
+
         }else{
             console.log(`всё норм для ${item.id}`)
         }
