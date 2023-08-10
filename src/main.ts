@@ -9,10 +9,12 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
+  const port = process.env.PORT || 3000;
+
   const siteStatusService = app.get(SiteStatusService)
 
   startObservation(siteStatusService)
   
-  await app.listen( process.env.APP_PORT,'0.0.0.0');
+  await app.listen( port, "0.0.0.0"); 
 }
 bootstrap();
