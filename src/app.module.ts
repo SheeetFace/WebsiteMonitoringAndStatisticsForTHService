@@ -18,10 +18,10 @@ import * as fs from 'fs';
                 username:configService.get('DB_USERNAME'),
                 password:configService.get('DB_PASSWORD'),
                 database:configService.get('DB_NAME'),
-                // ssl: { rejectUnauthorized: false },
-                ssl: {
-                  ca: fs.readFileSync('ca.pem')
-                },
+                ssl: { rejectUnauthorized: false },
+                // ssl: {
+                //   ca: fs.readFileSync('ca.pem')
+                // },
                 synchronize:true,
                 entities:[__dirname + '/**/*.entity{.js,.ts}']
               }),
