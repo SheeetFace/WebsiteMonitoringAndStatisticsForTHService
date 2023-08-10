@@ -28,8 +28,8 @@ export const startObservation =(siteStatusService: any) => {
   
     setInterval(()=> {
         chekingAll()
-    // }, 900000);
-    }, 30000);
+    }, 900000);
+    // }, 30000);
 
     const chekingAll = async()=>{
       console.log('chekingAll')
@@ -57,7 +57,7 @@ export const startObservation =(siteStatusService: any) => {
 
     const checkOne =async(item:Item)=>{
         const siteStatus = await checkWebsite(item.URL)
-        console.log(item)
+
         if(siteStatus.status !== item.statistics[item.statistics.length-1].status){
             console.log(`НЕ СОВПАДАЕТ ${item.id}`)
 
