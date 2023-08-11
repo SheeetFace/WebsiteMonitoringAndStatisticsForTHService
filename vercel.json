@@ -9,6 +9,7 @@
             "use": "@vercel/node"
         }
     ],
+"outputPath": "public" ,
     "routes": [
         {
             "src": "/(.*)",
