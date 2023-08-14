@@ -3,6 +3,7 @@ import { checkWebsite } from "src/utils/website-checker.util"
 import { getCurrentDate } from "src/utils/date.util"
 import { discordNotifier } from "./discord/discord-notifier"
 
+
 interface Item{
     id: number,
     URL: string,
@@ -28,8 +29,8 @@ export const startObservation =(siteStatusService: any) => {
   
     setInterval(()=> {
         chekingAll()
-    }, 900000);
-    // }, 30000);
+    // }, 900000);
+    }, 60000);
 
     const chekingAll = async()=>{
       console.log('chekingAll')
@@ -44,7 +45,8 @@ export const startObservation =(siteStatusService: any) => {
             checkOne(item).then(()=>{
               checkedItems++ 
               if(checkedItems === totalItems){
-                console.log(`Проверено ${checkedItems} из ${totalItems}`);    
+                const now = getCurrentDate()
+                console.log(`Проверено ${checkedItems} из ${totalItems} в ${now}`);    
                 return 
               }
             })      

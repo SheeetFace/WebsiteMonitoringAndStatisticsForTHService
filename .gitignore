@@ -36,6 +36,9 @@ lerna-debug.log*
 
 # Ignore env files
 .env
+.toml
+/fly.toml
 
 # Ignore SSL certificates
 *.pem
+
