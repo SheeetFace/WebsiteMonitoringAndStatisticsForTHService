@@ -2,6 +2,8 @@
 export const getCurrentDate = ():string=>{
 
     const now = new Date;
+
+    now.setHours(now.getHours() + 3);  // разница в 3 часа с fly.io
     
     return now.toLocaleString('be-BY', {
         day: '2-digit',
