@@ -2,6 +2,7 @@
 
 
 This repository contains code for monitoring website availability and collecting statistics on their performance, as well as notifying owners about site availability. It is developed using NestJS, a framework for building scalable and efficient web applications on Node.js.
+
 The server-side of this repository is designed to display statistics on the twitchHub website. This allows website owners to use twitchHub as a central hub for monitoring the availability and performance of their websites. When collecting statistics and detecting website unavailability, data can be transmitted and displayed on the twitchHub website for convenient monitoring and analysis.
 
 ![banner](https://github.com/SheeetFace/WebsiteMonitoringAndStatisticsForTH/assets/93317676/9950b67e-ff9d-4123-9971-0aeff3e86e34)
