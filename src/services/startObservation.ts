@@ -29,11 +29,10 @@ export const startObservation =(siteStatusService: any) => {
   
     setInterval(()=> {
         chekingAll()
-    // }, 900000);
-    }, 60000);
+    }, 180000);
+    // }, 60000);
 
     const chekingAll = async()=>{
-      console.log('chekingAll')
         const res = await findAllFunction() 
 
         const totalItems = res.length
