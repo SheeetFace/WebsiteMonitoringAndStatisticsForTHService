@@ -54,7 +54,16 @@ export class SiteStatusService {
 
   async findOne(projectID: string) {
     const strProjectID =projectID.replace(":", "")
-    return await this.categoryRepository.find({where: {projectID: strProjectID}}); 
+    const data = await this.categoryRepository.find({where: {projectID: strProjectID}})
+    const lastStatus =await checkWebsite(data[0].URL)
+    const statusNow = {
+      "date": getCurrentDate(),
+      "status": lastStatus.status
+    }
+
+    data[0].statistics.push(statusNow)
+    console.log(data)
+    return data
   }
 
   async changeData(projectID: string, newData:{webHook:string, URL:string}){

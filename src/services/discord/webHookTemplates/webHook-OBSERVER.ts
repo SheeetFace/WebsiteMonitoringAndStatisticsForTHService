@@ -9,7 +9,7 @@ export const webHookOBSERVER = (status:Status,date:string,URL:string)=>{
         "embeds": [
             {
                 "author": {
-                    "name": status.status ? "😀 ФУХ, ВСЁ ЗАРАБОТАЛО 😀" : "🚨 О НЕТ,САЙТ УПАЛ 🚨",
+                    "name": status.status ? "😀 ФУХ, ВСЁ ЗАРАБОТАЛО 😀" : "🚨 О НЕТ, САЙТ УПАЛ 🚨",
                 },
                 "title": status.status ? '' : `${status.isError}`,
                 "description": `${URL}`,

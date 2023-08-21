@@ -9,7 +9,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.enableCors();
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
 
   const siteStatusService = app.get(SiteStatusService)
 
@@ -18,3 +18,5 @@ async function bootstrap() {
   await app.listen( port, "0.0.0.0"); 
 }
 bootstrap();
+
+//! fly apps restart "название из .toml"
