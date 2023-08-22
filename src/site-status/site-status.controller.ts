@@ -21,6 +21,11 @@ export class SiteStatusController {
     return this.siteStatusService.findOne(projectID);
   }
 
+  @Get('/checkSiteStatus:projectID')
+  async checkSiteStatus(@Param('projectID') projectID: string,) {
+    return this.siteStatusService.checkSiteStatus(projectID);
+  }
+
   @Patch('/changeData:projectID')
   async changeData(@Param('projectID') projectID: string, @Body() newData:{webHook:string, URL:string}){
     return await this.siteStatusService.changeData(projectID, newData);

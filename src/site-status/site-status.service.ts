@@ -55,15 +55,46 @@ export class SiteStatusService {
   async findOne(projectID: string) {
     const strProjectID =projectID.replace(":", "")
     const data = await this.categoryRepository.find({where: {projectID: strProjectID}})
+
+    if(!data || !data.length){
+      console.error('Project not found by projectID in findOne')
+    }
+    
+    const item = data[0]
+    
+    if(!item.URL){
+      console.error('URL not defined in item = data[0] in findOne')
+    }
+
     const lastStatus =await checkWebsite(data[0].URL)
+    
     const statusNow = {
       "date": getCurrentDate(),
       "status": lastStatus.status
     }
 
     data[0].statistics.push(statusNow)
-    console.log(data)
+
     return data
+  }
+
+  async checkSiteStatus(projectID: string) {
+    const strProjectID =projectID.replace(":", "")
+    const data = await this.categoryRepository.find({where: {projectID: strProjectID}});
+
+    if(!data || !data.length){
+      console.error('Project not found by projectID in checkSiteStatus')
+    }
+    
+    const item = data[0]
+    
+    if(!item.URL){
+      console.error('URL not defined in item = data[0] in checkSiteStatus')
+    }
+    
+    const status = await checkWebsite(item.URL)
+
+    return {status:status.status}
   }
 
   async changeData(projectID: string, newData:{webHook:string, URL:string}){
