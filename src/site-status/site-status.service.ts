@@ -78,21 +78,21 @@ export class SiteStatusService {
     return data
   }
 
-  async checkSiteStatus(projectID: string) {
-    const strProjectID =projectID.replace(":", "")
-    const data = await this.categoryRepository.find({where: {projectID: strProjectID}});
+  async checkSiteStatus(URL: string) {
+    // const replacedURL =URL.replace(":", "")
+    // console.log(replacedURL )
+    // const data = await this.categoryRepository.find({where: {projectID: strProjectID}});
 
-    if(!data || !data.length){
-      console.error('Project not found by projectID in checkSiteStatus')
+    // if(!data || !data.length){
+    //   console.error('Project not found by projectID in checkSiteStatus')
+    // }
+    
+    // const item = data[0]
+    if(!URL){
+      console.error('URL not defined')
     }
     
-    const item = data[0]
-    
-    if(!item.URL){
-      console.error('URL not defined in item = data[0] in checkSiteStatus')
-    }
-    
-    const status = await checkWebsite(item.URL)
+    const status = await checkWebsite(URL)
 
     return {status:status.status}
   }

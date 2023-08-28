@@ -21,9 +21,13 @@ export class SiteStatusController {
     return this.siteStatusService.findOne(projectID);
   }
 
-  @Get('/checkSiteStatus:projectID')
-  async checkSiteStatus(@Param('projectID') projectID: string,) {
-    return this.siteStatusService.checkSiteStatus(projectID);
+  // @Get('/checkSiteStatus:URL')
+  // async checkSiteStatus(@Param('URL') URL: string,) {
+  //   return this.siteStatusService.checkSiteStatus(URL);
+  // }
+  @Post('/checkSiteStatus')
+  async checkSiteStatus( @Body() body:{ url: string}) {
+    return this.siteStatusService.checkSiteStatus(body.url);
   }
 
   @Patch('/changeData:projectID')
