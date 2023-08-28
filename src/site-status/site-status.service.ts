@@ -78,7 +78,7 @@ export class SiteStatusService {
     return data
   }
 
-  async checkSiteStatus(URL: string) {
+  async checkSiteStatus(URL:string) {
     // const replacedURL =URL.replace(":", "")
     // console.log(replacedURL )
     // const data = await this.categoryRepository.find({where: {projectID: strProjectID}});
