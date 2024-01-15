@@ -14,6 +14,10 @@ export const checkWebsite = async(url:string):Promise<Response>=>{
         }
         
         if(response.status >= 400){
+          if(response.statusText === "Forbidden"){
+            console.error("Forbidden but...")
+            return { status:true}
+          }
           console.error(`💀 ОШИБКА ПОЛУЧЕНИЯ ДАННЫХ ПРИ ПРОВЕРКЕ СТАТУСА САЙТА(${url} ${response.statusText})💀`)
           return {status:false, 
                   isError: response.statusText }

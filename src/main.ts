@@ -20,3 +20,4 @@ async function bootstrap() {
 bootstrap();
 
 //! fly apps restart "название из .toml"
+//! flyctl apps restart "название из .toml"
